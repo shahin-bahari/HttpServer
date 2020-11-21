@@ -85,18 +85,16 @@ public class SocketHandler implements Runnable {
                 if(socket != null){
                     dispatchAcceptedSocket(socket);
                 }
-            }
-            if(key.isWritable()){
-                System.out.println("loop write");
-                SocketChannel socket = getSocket(key);
-                if(socket != null && !readyToWrite(socket)){
-                    terminateConnection(socket,key);
-                }
-            }
-            if(key.isReadable()){
+            }else if(key.isReadable()){
                 System.out.println("loop read");
                 SocketChannel socket = getSocket(key);
                 if(socket != null && !readyToRead(socket)){
+                    terminateConnection(socket,key);
+                }
+            }else if(key.isWritable()){
+                System.out.println("loop write");
+                SocketChannel socket = getSocket(key);
+                if(socket != null && !readyToWrite(socket)){
                     terminateConnection(socket,key);
                 }
             }
@@ -110,7 +108,6 @@ public class SocketHandler implements Runnable {
             if(socket == null){
                 continue;
             }
-            System.out.println("incoming type is " + packet.type);
             switch (packet.type) {
                 case READ_REQUEST -> registerRead(socket);
                 case WRITE_REQUEST -> writeData(socket, packet.data);

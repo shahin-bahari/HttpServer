@@ -46,7 +46,7 @@ public class FileResponse extends HttpResponse {
             ByteBuffer buffer = BufferCache.generateBuffer();
             int size = 0;
             try {
-                size =  fileChannel.read(buffer);
+                size =  fileChannel.read(buffer,startPos);
             } catch (IOException e) {
                 e.printStackTrace();
             }
