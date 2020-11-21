@@ -4,6 +4,7 @@ import com.shahin.httpServer.http.HttpRequest;
 import com.shahin.httpServer.response.FileResponse;
 import com.shahin.httpServer.response.HttpResponseStatus;
 import com.shahin.httpServer.response.TextResponse;
+import com.shahin.httpServer.router.Router;
 import com.shahin.httpServer.utils.MimeTypes;
 
 import java.io.IOException;
@@ -27,10 +28,12 @@ public class Connection {
     private WriteListener writeListener;
     private HttpRequest request;
     private ArrayList<SocketProxy.Packet> temporaryReqList;
+    private final Router router;
 
-    public Connection(ArrayList<SocketProxy.Packet> reqList,SocketChannel socket){
+    public Connection(ArrayList<SocketProxy.Packet> reqList,SocketChannel socket,Router router){
         this.socketChannel = socket;
         this.temporaryReqList = reqList;
+        this.router = router;
         request = new HttpRequest(this);
     }
 
@@ -72,13 +75,12 @@ public class Connection {
         //todo add websocket start read
     }
 
+    public Router getRouter() {
+        return router;
+    }
+
     public void requestReady(){
-        try {
-            FileResponse file = new FileResponse(request, Paths.get("C:/Users/shahi/Desktop/Untitled-1.txt"));
-            file.send();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        router.doRoute(request);
     }
 
 

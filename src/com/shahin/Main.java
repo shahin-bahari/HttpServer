@@ -2,6 +2,7 @@ package com.shahin;
 
 
 import com.shahin.httpServer.HttpServer;
+import com.shahin.httpServer.router.StaticFile;
 
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
@@ -17,6 +18,7 @@ public class Main {
 	// write your code here
 
         HttpServer server = new HttpServer(2);
+        server.getRouter().addStaticFile(new StaticFile("E://music",true));
 
         try {
             for(NetworkInterface ni : Collections.list(NetworkInterface.getNetworkInterfaces())){

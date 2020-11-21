@@ -3,6 +3,7 @@ package com.shahin.httpServer;
 import com.shahin.httpServer.connection.Connection;
 import com.shahin.httpServer.connection.SocketHandler;
 import com.shahin.httpServer.connection.SocketProxy;
+import com.shahin.httpServer.router.Router;
 
 import java.net.SocketAddress;
 import java.nio.channels.SocketChannel;
@@ -16,6 +17,7 @@ public class HttpServer {
     private final ExecutorService executor;
     private final ConcurrentHashMap<SocketChannel, Connection> clients = new ConcurrentHashMap<>();
     private final ArrayList<SocketHandler> socketHandlers = new ArrayList<>();
+    private final Router router = new Router();
 
     public HttpServer(int threadCount){
         executor = Executors.newFixedThreadPool(threadCount, new ThreadFactory() {
@@ -42,6 +44,10 @@ public class HttpServer {
         }
     }
 
+    public Router getRouter() {
+        return router;
+    }
+
     private void submitJob(SocketProxy.Packet packet){
         if(packet.socket == null){
             return;
@@ -49,7 +55,7 @@ public class HttpServer {
         executor.submit(() -> {
             ArrayList<SocketProxy.Packet> taskList = new ArrayList<>(1);
             switch (packet.type){
-                case NEW_ACCEPTED_SOCKET -> clients.put(packet.socket,new Connection(taskList,packet.socket));
+                case NEW_ACCEPTED_SOCKET -> clients.put(packet.socket,new Connection(taskList,packet.socket,router));
                 case SOCKET_TERMINATE -> clients.remove(packet.socket);
                 case WRITE_DATA_DONE -> {
                     Connection conn = clients.get(packet.socket);
