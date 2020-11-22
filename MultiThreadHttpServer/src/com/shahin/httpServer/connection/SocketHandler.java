@@ -80,19 +80,16 @@ public class SocketHandler implements Runnable {
                 continue;
             }
             if(key.isAcceptable()){
-                System.out.println("loop accepted");
                 SocketChannel socket = getSocketFromServerSocket();
                 if(socket != null){
                     dispatchAcceptedSocket(socket);
                 }
             }else if(key.isReadable()){
-                System.out.println("loop read");
                 SocketChannel socket = getSocket(key);
                 if(socket != null && !readyToRead(socket)){
                     terminateConnection(socket,key);
                 }
             }else if(key.isWritable()){
-                System.out.println("loop write");
                 SocketChannel socket = getSocket(key);
                 if(socket != null && !readyToWrite(socket)){
                     terminateConnection(socket,key);
@@ -105,7 +102,9 @@ public class SocketHandler implements Runnable {
         SocketProxy.Packet packet = proxy.socketGetPacket(address);
         while(packet != null){
             SocketChannel socket = packet.socket;
-            if(socket == null){
+            if(socket == null || !socket.isOpen()){
+                packet = proxy.socketGetPacket(address);
+                BufferCache.recycleBuffer(packet.data);
                 continue;
             }
             switch (packet.type) {
@@ -240,7 +239,7 @@ public class SocketHandler implements Runnable {
                 socket.register(selector,ops);
             }
         }catch (IOException e){
-            e.printStackTrace();
+            //e.printStackTrace();
             BufferCache.recycleBuffer(buffer);
         }
     }

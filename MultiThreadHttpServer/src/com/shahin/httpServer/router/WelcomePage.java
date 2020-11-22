@@ -34,7 +34,7 @@ public class WelcomePage {
             "\tfont-weight: 700;\n" +
             "\tcolor: #151515;\n" +
             "\ttext-align: center;\">\n" +
-            "\tWelcome to the Coffee Maker...\n" +
+            "\tWelcome to the Http Server...\n" +
             "\t</h2>\n" +
             "</body></html>";
 

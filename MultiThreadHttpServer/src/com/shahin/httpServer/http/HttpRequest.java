@@ -116,6 +116,10 @@ public class HttpRequest {
         return connection;
     }
 
+    public ByteBuffer getFirstDataBlock() {
+        return firstDataBlock;
+    }
+
     public void recycle(){
         BufferCache.recycleBuffer(firstDataBlock);
     }

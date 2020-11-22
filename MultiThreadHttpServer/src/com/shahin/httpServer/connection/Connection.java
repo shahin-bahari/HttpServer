@@ -1,16 +1,10 @@
 package com.shahin.httpServer.connection;
 
 import com.shahin.httpServer.http.HttpRequest;
-import com.shahin.httpServer.response.FileResponse;
-import com.shahin.httpServer.response.HttpResponseStatus;
-import com.shahin.httpServer.response.TextResponse;
 import com.shahin.httpServer.router.Router;
-import com.shahin.httpServer.utils.MimeTypes;
 
-import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 
 public class Connection {
@@ -82,6 +76,8 @@ public class Connection {
     public void requestReady(){
         router.doRoute(request);
     }
+
+
 
 
 }

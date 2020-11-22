@@ -1,5 +1,7 @@
 package com.shahin.httpServer.connection;
 
+import com.shahin.httpServer.utils.BufferCache;
+
 import java.io.IOException;
 import java.net.SocketAddress;
 import java.nio.ByteBuffer;
@@ -60,7 +62,12 @@ public class SocketProxy {
     public void poolSendPacket(Packet packet){
         SocketAddress address;
         try {
-            address = packet.socket.getLocalAddress();
+            SocketChannel socket = packet.socket;
+            if(!socket.isOpen()){
+                BufferCache.recycleBuffer(packet.data);
+                return;
+            }
+            address = socket.getLocalAddress();
         } catch (IOException e) {
             e.printStackTrace();
             return;

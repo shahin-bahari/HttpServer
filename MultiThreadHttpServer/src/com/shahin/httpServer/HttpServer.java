@@ -4,6 +4,7 @@ import com.shahin.httpServer.connection.Connection;
 import com.shahin.httpServer.connection.SocketHandler;
 import com.shahin.httpServer.connection.SocketProxy;
 import com.shahin.httpServer.router.Router;
+import com.shahin.httpServer.utils.BufferCache;
 
 import java.net.SocketAddress;
 import java.nio.channels.SocketChannel;
@@ -29,6 +30,7 @@ public class HttpServer {
                 return t;
             }
         });
+        //executor = Executors.newFixedThreadPool(threadCount);
 
         proxy = new SocketProxy(this::submitJob);
     }
@@ -65,8 +67,12 @@ public class HttpServer {
                 }
                 case NEW_INCOMING_DATA -> {
                     Connection conn = clients.get(packet.socket);
-                    if(conn != null && packet.data != null){
-                        conn.newIncomingData(taskList,packet.data);
+                    if(packet.data != null){
+                        if(conn != null){
+                            conn.newIncomingData(taskList,packet.data);
+                        }else{
+                            BufferCache.recycleBuffer(packet.data);
+                        }
                     }
                 }
             }

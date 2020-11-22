@@ -47,7 +47,7 @@ public class TemplateEngine {
         } catch (IOException e) {
             e.printStackTrace();
             return request.getConnection().getRouter()
-                    .getServerResponse(HttpResponseStatus.INTERNAL_SERVER_ERROR).resolve(request);
+                    .getServerDefaultResponse(HttpResponseStatus.INTERNAL_SERVER_ERROR).resolve(request);
         }
         return new HttpResponse(request){
 
