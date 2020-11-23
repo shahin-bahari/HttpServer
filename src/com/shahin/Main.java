@@ -37,10 +37,10 @@ public class Main {
             return res;
         });
 
-        server.getRouter().addRoute("/book/:id", HttpRequestMethod.GET, request -> {
+        server.getRouter().addRoute("/article/:id", HttpRequestMethod.GET, request -> {
             TextResponse res = new TextResponse(request, HttpResponseStatus.OK, MimeTypes.PLAIN_TEXT);
             res.writeMessage("get Argument in uri using \":\"\n");
-            res.writeMessage("book " + request.getParams().get(":id"));
+            res.writeMessage("article " + request.getParams().get(":id"));
             res.send();
             return res;
         });
