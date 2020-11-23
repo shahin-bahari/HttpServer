@@ -58,6 +58,7 @@ public class Connection {
     }
 
     public void terminateConnection(){
+        request.recycle();
         temporaryReqList.add(new SocketProxy.Packet(socketChannel, SocketProxy.Type.CLOSE_REQUEST));
     }
 
@@ -77,7 +78,10 @@ public class Connection {
         router.doRoute(request);
     }
 
-
-
-
+    @Override
+    public String toString() {
+        return "Connection{" +
+                socketChannel +
+                '}';
+    }
 }

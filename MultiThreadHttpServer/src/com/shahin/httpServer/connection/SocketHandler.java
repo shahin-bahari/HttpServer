@@ -103,8 +103,8 @@ public class SocketHandler implements Runnable {
         while(packet != null){
             SocketChannel socket = packet.socket;
             if(socket == null || !socket.isOpen()){
-                packet = proxy.socketGetPacket(address);
                 BufferCache.recycleBuffer(packet.data);
+                packet = proxy.socketGetPacket(address);
                 continue;
             }
             switch (packet.type) {
@@ -155,7 +155,7 @@ public class SocketHandler implements Runnable {
         if(key != null){
             key.cancel();
         }
-        pendingBuffer.remove(socket);
+        BufferCache.recycleBuffer(pendingBuffer.remove(socket));
         proxy.socketSendPacket(new SocketProxy.Packet(socket, SocketProxy.Type.SOCKET_TERMINATE));
     }
 
@@ -192,8 +192,8 @@ public class SocketHandler implements Runnable {
         try{
             socket.write(buffer);
             if(buffer.remaining() == 0){
-                pendingBuffer.remove(socket,buffer);
                 BufferCache.recycleBuffer(buffer);
+                pendingBuffer.remove(socket,buffer);
                 SocketProxy.Packet packet = new SocketProxy.Packet
                         (socket,SocketProxy.Type.WRITE_DATA_DONE);
                 proxy.socketSendPacket(packet);

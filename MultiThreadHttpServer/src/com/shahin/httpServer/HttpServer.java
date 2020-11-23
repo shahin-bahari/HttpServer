@@ -9,6 +9,8 @@ import com.shahin.httpServer.utils.BufferCache;
 import java.net.SocketAddress;
 import java.nio.channels.SocketChannel;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 import java.util.concurrent.*;
 
 public class HttpServer {
@@ -30,7 +32,6 @@ public class HttpServer {
                 return t;
             }
         });
-        //executor = Executors.newFixedThreadPool(threadCount);
 
         proxy = new SocketProxy(this::submitJob);
     }
@@ -80,6 +81,10 @@ public class HttpServer {
                 proxy.poolSendPacket(p);
             }
         });
+    }
+
+    public List<Connection> getClientList(){
+        return new ArrayList<>(clients.values());
     }
 
 }

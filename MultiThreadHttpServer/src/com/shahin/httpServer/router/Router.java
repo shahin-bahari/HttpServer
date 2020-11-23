@@ -5,6 +5,8 @@ import com.shahin.httpServer.http.HttpRequestMethod;
 import com.shahin.httpServer.response.HttpResponse;
 import com.shahin.httpServer.response.HttpResponseStatus;
 
+import java.io.File;
+import java.util.Formatter;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -91,5 +93,26 @@ public class Router {
         }
 
         getServerDefaultResponse(HttpResponseStatus.NOT_FOUND).resolve(request).send();
+    }
+
+    public String report(){
+        StringBuilder sb = new StringBuilder();
+        sb.append(new Formatter().format("%-50s %-30s\n",
+                "URL","redirect to"));
+
+        for(Routing routing : routings){
+            for(String path : routing.getRoutingPath()){
+                sb.append(new Formatter().format("%-50s %-30s\n",
+                        path,redirectRules.getOrDefault(path, "-")));
+            }
+        }
+
+        for(StaticFile p : staticFiles){
+            String path = p.getPublicDir();
+            String name = new File(path).getName();
+            sb.append(new Formatter().format("/%-50s %-30s\n",
+                    name,path));
+        }
+        return sb.toString();
     }
 }
