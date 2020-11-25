@@ -102,7 +102,7 @@ public class Main {
             res.send();
         }
 
-        @RequestMapping(path = "simple_post" , method = HttpRequestMethod.POST)
+        @RequestMapping(path = "/simple_post" , method = HttpRequestMethod.POST)
         public void simplePost(HttpRequest req,@PostParam Map<String,List<String>> str){
             TextResponse res = new TextResponse(req, HttpResponseStatus.OK, MimeTypes.PLAIN_TEXT);
             res.writeMessage("post args : " + str);

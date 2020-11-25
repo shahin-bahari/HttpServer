@@ -9,7 +9,6 @@ public class BufferCache {
     public static int BUFFER_SIZE = 8 * 1024;
     private static int QUEUE_LENGTH = 32;
     private static ArrayDeque<ByteBuffer> buffers = new ArrayDeque<>(QUEUE_LENGTH);
-    private static int counter = 0;
 
     public static void initCache(int bufferSize, int queueLength){
         BUFFER_SIZE = bufferSize;
@@ -26,7 +25,6 @@ public class BufferCache {
     public static ByteBuffer generateBuffer(){
         ByteBuffer buffer = buffers.poll();
         if(buffer == null){
-            System.out.println("buffer generate count is " + counter++);
             return ByteBuffer.allocate(BUFFER_SIZE).order(ByteOrder.nativeOrder());
         }
         buffer.clear();

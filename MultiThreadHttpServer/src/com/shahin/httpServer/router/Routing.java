@@ -5,6 +5,7 @@ import com.shahin.httpServer.http.HttpRequestMethod;
 import com.shahin.httpServer.http.PostDataParser;
 import com.shahin.httpServer.http.PostParam;
 import com.shahin.httpServer.logger.Log;
+import com.shahin.httpServer.webSocket.WebSocket;
 
 import java.lang.reflect.*;
 import java.util.List;
@@ -135,5 +136,9 @@ public class Routing {
             res[i] = rules.get(i).toString();
         }
         return res;
+    }
+
+    public WebSocket getWebSocket(){
+        return null;
     }
 }

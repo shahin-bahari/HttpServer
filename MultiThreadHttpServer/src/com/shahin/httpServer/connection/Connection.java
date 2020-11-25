@@ -2,6 +2,8 @@ package com.shahin.httpServer.connection;
 
 import com.shahin.httpServer.http.HttpRequest;
 import com.shahin.httpServer.router.Router;
+import com.shahin.httpServer.webSocket.WebSocket;
+import com.shahin.httpServer.webSocket.WebSocketSession;
 
 import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
@@ -23,6 +25,7 @@ public class Connection {
     private HttpRequest request;
     private ArrayList<SocketProxy.Packet> temporaryReqList;
     private final Router router;
+    private WebSocketSession wsSession;
 
     public Connection(ArrayList<SocketProxy.Packet> reqList,SocketChannel socket,Router router){
         this.socketChannel = socket;
@@ -66,8 +69,12 @@ public class Connection {
         request.recycle();
         writeListener = null;
         readListener = null;
-        request = new HttpRequest(this);
-        //todo add websocket start read
+        if(wsSession == null){
+            request = new HttpRequest(this);
+        }else{
+            request = null;
+            wsSession.startRead();
+        }
     }
 
     public Router getRouter() {
@@ -75,7 +82,10 @@ public class Connection {
     }
 
     public void requestReady(){
-        router.doRoute(request);
+        WebSocket ws = router.doRoute(request);
+        if(ws !=null){
+            wsSession = new WebSocketSession(request,ws);
+        }
     }
 
     @Override
