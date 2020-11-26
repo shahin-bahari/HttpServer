@@ -1,7 +1,5 @@
 package com.shahin.httpServer.webSocket;
 
-import com.shahin.httpServer.http.HttpRequest;
-
 import java.nio.ByteBuffer;
 
 public interface WebSocket {
@@ -15,23 +13,17 @@ public interface WebSocket {
     String WEB_SOCKET_CONNECTION_VALUE = "Upgrade";
     String WEB_SOCKET_ACCEPT_TAG = "sec-websocket-accept";
 
-    default void onOpen(HttpRequest session){
+    default void onOpen(WebSocketSession session){}
 
-    }
+    default void onClose(WebSocketSession session, CloseCode closeCode,String reason){}
 
-    default void onClose(WebSocketSession session, CloseCode closeCode,String reason){
+    default void onError(WebSocketException exception){}
 
-    }
+    default void onMessage(WebSocketSession session, String msg, boolean hasMore){}
 
-    default void onError(Throwable throwable){
+    default void onMessage(WebSocketSession session, ByteBuffer data,boolean hasMore){}
 
-    }
+    default void onPong(ByteBuffer data){}
 
-    default void onMessage(WebSocketSession session, String msg){
-
-    }
-
-    default void onMessage(WebSocketSession session, ByteBuffer data){
-
-    }
+    default void onMessageSent(){}
 }
