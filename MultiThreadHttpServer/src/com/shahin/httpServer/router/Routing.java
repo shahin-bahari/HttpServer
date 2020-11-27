@@ -34,6 +34,11 @@ public class Routing {
         extractRouteFunction(base,obj);
     }
 
+    public Routing(String basePath,WebSocket ws){
+        rules.add(new WebSocketRule(basePath,ws));
+        object = null;
+    }
+
     public boolean invokeIfMatch(HttpRequest request){
         String uri = request.getUri();
         if(object != null && uri != null && !uri.startsWith(base)){
@@ -139,6 +144,9 @@ public class Routing {
     }
 
     public WebSocket getWebSocket(){
+        if(!rules.isEmpty() && rules.get(0) instanceof WebSocketRule){
+            return ((WebSocketRule)rules.get(0)).getWebSocket();
+        }
         return null;
     }
 }

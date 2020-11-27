@@ -1,6 +1,5 @@
 package com.shahin.httpServer.webSocket;
 
-import com.shahin.httpServer.http.ByteStringBuilder;
 import com.shahin.httpServer.utils.BufferCache;
 
 import java.nio.ByteBuffer;
@@ -11,13 +10,13 @@ public class WebSocketFrame {
 
     // only used during receiving data
     private final int maxFrameSize;
+    private FrameState frameState = FrameState.WaitForHeader;
+    private int tempIndex;
 
     private WebSocketOpCode opCode;
     private boolean fin;
     private byte[] maskKey;
     private long payloadLength;
-    private FrameState frameState = FrameState.WaitForHeader;
-    private int tempIndex;
     private final List<ByteBuffer> payloads = new ArrayList<>(1);
 
     private enum FrameState{
@@ -39,6 +38,9 @@ public class WebSocketFrame {
         this.opCode = opCode;
         payloads.addAll(pl);
         maxFrameSize = 0;
+        for(ByteBuffer buffer : pl){
+            payloadLength += buffer.remaining();
+        }
     }
 
     public WebSocketFrame(boolean isFinal, ByteBuffer data){
@@ -78,8 +80,11 @@ public class WebSocketFrame {
     }
 
     public void appendData(ByteBuffer buffer) throws WebSocketException {
-        while(buffer.remaining() > 0){
-            appendByte(buffer.get());
+        int len = buffer.remaining();
+        while(len > 0){
+            byte b = buffer.get();
+            appendByte(b);
+            len--;
         }
         BufferCache.recycleBuffer(buffer);
     }
@@ -98,12 +103,6 @@ public class WebSocketFrame {
 
     public boolean isComplete(){
         return frameState == FrameState.MessageReady;
-    }
-
-    public void recycle(){
-        for(ByteBuffer b : payloads){
-            BufferCache.recycleBuffer(b);
-        }
     }
 
     private void appendByte(byte b) throws WebSocketException {
@@ -156,7 +155,7 @@ public class WebSocketFrame {
             frameState = FrameState.WaitForMask;
             return;
         }
-        frameState = FrameState.WaitForPayload;
+        frameState = payloadLength == 0 ? FrameState.MessageReady:FrameState.WaitForPayload;
     }
 
     private void setLenExtend(byte b) throws WebSocketException {
@@ -190,9 +189,8 @@ public class WebSocketFrame {
     }
 
     private void prepareWaitForPayload(){
-        frameState = FrameState.WaitForPayload;
+        frameState = payloadLength == 0 ? FrameState.MessageReady :FrameState.WaitForPayload;
         tempIndex = 0;
-
     }
 
     private void setPayload(byte b){
@@ -204,7 +202,7 @@ public class WebSocketFrame {
         ByteBuffer buffer = payloads.get(payloads.size()-1);
         buffer.put(data);
 
-        if(buffer.remaining() == 0){
+        if(buffer.remaining() == 0 || tempIndex == payloadLength){
             buffer.flip();
             if(tempIndex != payloadLength){
                 payloads.add(BufferCache.generateBuffer());
@@ -226,7 +224,11 @@ public class WebSocketFrame {
         fillMessageHeader(buffer);
         if(payloads.size() == 1 && payloads.get(0).remaining() < buffer.remaining()){
             buffer.put(payloads.get(0));
+            buffer.flip();
+            pack.add(buffer);
+            BufferCache.recycleBuffer(payloads.get(0));
         }else{
+            buffer.flip();
             pack.add(buffer);
             pack.addAll(payloads);
         }

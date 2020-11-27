@@ -27,6 +27,7 @@ public class Main {
         server.getRouter().setShowReportState(true);
 
         server.getRouter().addRedirectRule("/from_here","/to_here");
+        server.getRouter().addRoute("/chat",new WebSocketTest());
 
         server.getRouter().addRoute("/to_here",HttpRequestMethod.GET, request -> {
             TextResponse res = new TextResponse(request, HttpResponseStatus.OK, MimeTypes.PLAIN_TEXT);

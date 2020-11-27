@@ -51,6 +51,10 @@ public class Router {
         routings.add(new Routing(basePath,obj));
     }
 
+    public void addRoute(String base,WebSocket ws){
+        routings.add(new Routing(base,ws));
+    }
+
     public void setShowReportState(boolean state){
         showReport = state;
     }

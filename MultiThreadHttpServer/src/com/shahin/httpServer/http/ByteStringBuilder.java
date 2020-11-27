@@ -31,8 +31,8 @@ public class ByteStringBuilder {
     public String toString(){
         String str = sb.toString();
         sb.setLength(0);
-        oldValue = 0;
-        remainChar = 0;
+        //oldValue = 0;
+        //remainChar = 0;
         return str;
     }
 
