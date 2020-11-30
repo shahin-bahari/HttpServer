@@ -92,7 +92,7 @@ public class WebSocketSession {
                 }
                 startRead();
             } catch (WebSocketException e) {
-                ws.onError(e);
+                ws.onError(this,e);
             }
         });
     }

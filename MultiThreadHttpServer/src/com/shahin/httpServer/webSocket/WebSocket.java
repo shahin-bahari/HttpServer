@@ -17,7 +17,7 @@ public interface WebSocket {
 
     default void onClose(WebSocketSession session, CloseCode closeCode,String reason){}
 
-    default void onError(WebSocketException exception){}
+    default void onError(WebSocketSession session,WebSocketException exception){}
 
     default void onMessage(WebSocketSession session, String msg, boolean hasMore){}
 

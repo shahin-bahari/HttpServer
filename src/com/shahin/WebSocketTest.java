@@ -19,7 +19,7 @@ public class WebSocketTest implements WebSocket {
     }
 
     @Override
-    public void onError(WebSocketException exception) {
+    public void onError(WebSocketSession session,WebSocketException exception) {
         System.out.println(exception.getCloseCode());
     }
 
