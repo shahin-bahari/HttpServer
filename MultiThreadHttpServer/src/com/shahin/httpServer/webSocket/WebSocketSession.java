@@ -83,6 +83,11 @@ public class WebSocketSession {
     }
 
     public void startRead(){
+        ws.onOpen(this);
+        read();
+    }
+
+    private void read(){
         request.getConnection().readDataFromSocket(buffer -> {
             try {
                 frame.appendData(buffer);
@@ -90,7 +95,7 @@ public class WebSocketSession {
                     handleNewFrame();
                     frame = new WebSocketFrame(BufferCache.BUFFER_SIZE);
                 }
-                startRead();
+                read();
             } catch (WebSocketException e) {
                 ws.onError(this,e);
             }
@@ -197,7 +202,6 @@ public class WebSocketSession {
         }
         response.addHeader(WebSocket.WEB_SOCKET_ACCEPT_TAG,resKey);
         response.send();
-        ws.onOpen(this);
     }
 
     private String generateWebSocketAcceptKey() throws NoSuchAlgorithmException {
@@ -218,12 +222,13 @@ public class WebSocketSession {
             }else{
                 writeOnTheFly = true;
                 List<ByteBuffer> buffer = frame.getSendPackage();
-                if(buffer.size()>0){
-                    for(int i = 1 ; i < buffer.size() ; i++){
+                if(buffer.size()>1) {
+                    for (int i = 1; i < buffer.size(); i++) {
                         writeQueue.offer(buffer.get(i));
                     }
-                    request.getConnection().writeDataToSocket(buffer.get(0),this::checkWriteQueue);
                 }
+                request.getConnection().writeDataToSocket(buffer.get(0),this::checkWriteQueue);
+
             }
         }
     }

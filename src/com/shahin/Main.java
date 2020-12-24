@@ -1,6 +1,5 @@
 package com.shahin;
 
-
 import com.shahin.httpServer.HttpServer;
 import com.shahin.httpServer.connection.Connection;
 import com.shahin.httpServer.http.*;
@@ -10,10 +9,7 @@ import com.shahin.httpServer.router.RequestMapping;
 import com.shahin.httpServer.router.StaticFile;
 import com.shahin.httpServer.utils.MimeTypes;
 
-import java.net.InetAddress;
-import java.net.InetSocketAddress;
-import java.net.NetworkInterface;
-import java.net.SocketException;
+import java.net.*;
 import java.util.*;
 
 public class Main {
@@ -55,7 +51,8 @@ public class Main {
         server.getRouter().addRoute("/base",new RouteTest());
 
         // just localhost
-        //server.listen(new InetSocketAddress(8080));
+        server.listenSSL(new InetSocketAddress("127.0.0.1",8081));
+
 
         try {
             for(NetworkInterface ni : Collections.list(NetworkInterface.getNetworkInterfaces())){

@@ -7,7 +7,7 @@ import com.shahin.httpServer.webSocket.WebSocketSession;
 
 import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
-import java.util.ArrayList;
+import java.util.List;
 
 public class Connection {
 
@@ -23,25 +23,25 @@ public class Connection {
     private ReadListener readListener ;
     private WriteListener writeListener;
     private HttpRequest request;
-    private ArrayList<SocketProxy.Packet> temporaryReqList;
+    private List<SocketProxy.Packet> temporaryReqList;
     private final Router router;
     private WebSocketSession wsSession;
 
-    public Connection(ArrayList<SocketProxy.Packet> reqList,SocketChannel socket,Router router){
+    public Connection(List<SocketProxy.Packet> reqList,SocketChannel socket,Router router){
         this.socketChannel = socket;
         this.temporaryReqList = reqList;
         this.router = router;
         request = new HttpRequest(this);
     }
 
-    public void newIncomingData(ArrayList<SocketProxy.Packet> reqList,ByteBuffer buffer){
+    public void newIncomingData(List<SocketProxy.Packet> reqList,ByteBuffer buffer){
         this.temporaryReqList = reqList;
         if(readListener != null){
             readListener.onRead(buffer);
         }
     }
 
-    public void writeDoneAck(ArrayList<SocketProxy.Packet> reqList){
+    public void writeDoneAck(List<SocketProxy.Packet> reqList){
         this.temporaryReqList = reqList;
         if(writeListener != null){
             writeListener.onWriteDone();

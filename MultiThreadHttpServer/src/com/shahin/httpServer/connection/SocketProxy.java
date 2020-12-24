@@ -49,6 +49,7 @@ public class SocketProxy {
     public void socketRegister(SocketAddress address, Runnable wakeUpFunc){
         socketsWakeUp.put(address, wakeUpFunc);
         pipes.put(address,new ConcurrentLinkedQueue<>());
+        int d = 3;
     }
 
     public void socketSendPacket(Packet packet){
@@ -56,6 +57,7 @@ public class SocketProxy {
     }
 
     public Packet socketGetPacket(SocketAddress socketAddress){
+
         return pipes.get(socketAddress).poll();
     }
 
